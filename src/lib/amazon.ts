@@ -49,6 +49,15 @@ export async function getBookDetails(asin: string): Promise<AmazonBook> {
         }
     }
 
+// Check if book is in English
+    const brand = data.product_results?.brand;
+    if (brand && !brand.trimStart().startsWith("by ")) {
+        throw new AppError(
+            "NON_ENGLISH_BOOK",
+            `Book is not in English. Brand: "${brand}"`
+        );
+    }
+
     // Extract publication date
     const dateStr: string | undefined =
         data.product_details?.publication_date ??
@@ -60,7 +69,7 @@ export async function getBookDetails(asin: string): Promise<AmazonBook> {
 
     // Extract authors - try brand field first (Kindle editions have complete data)
     let authors: string[];
-    const brand = data.product_results?.brand;
+    //brand already defined
 
     if (brand) {
         authors = parseAuthors(brand);

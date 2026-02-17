@@ -4,7 +4,8 @@ export type ErrorCode =
     | "AUTHOR_PARSE_FAILED"
     | "PRODUCT_NOT_FOUND"
     | "MISSING_PARAM"
-    | "API_ERROR";
+    | "API_ERROR"
+    |"NON_ENGLISH_BOOK";
 
 export class AppError extends Error {
     code: ErrorCode;
