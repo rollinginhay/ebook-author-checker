@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { extractAuthorAsin } from "@/lib/utils";
-import { getBooksByAuthorId } from "@/lib/amazon";
-import { AmazonBook } from "@/types/types";
-import { AppError } from "@/lib/errors";
+import {extractAuthorAsin} from "@/lib/utils";
+import {getBooksByAuthorId} from "@/lib/amazon";
+import {AmazonBook} from "@/types/types";
+import {AppError} from "@/lib/errors";
+import Image from "next/image";
 
 export default async function ResultsPage({
   searchParams,
@@ -136,7 +137,7 @@ export default async function ResultsPage({
                   <tr key={book.asin} className="border-b border-zinc-100 dark:border-zinc-800">
                     <td className="px-4 py-3">
                       {book.thumbnail && (
-                        <img src={book.thumbnail} alt={book.title} className="h-16 w-auto rounded" />
+                        <Image src={book.thumbnail} alt={book.title} className="h-16 w-auto rounded" />
                       )}
                     </td>
                     <td className="px-4 py-3 text-zinc-900 dark:text-zinc-100">

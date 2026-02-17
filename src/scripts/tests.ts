@@ -1,5 +1,5 @@
 import {extractAuthorAsin,} from "@/lib/utils";
-import {getBookDetails, getBooksByAuthorId} from "@/lib/amazon";
+import {getBooksByAuthorId} from "@/lib/amazon";
 
 const url = "https://www.amazon.com/stores/Eliza-Hawk/author/B0FMMBTGJN?shoppingPortalEnabled=true";
 
