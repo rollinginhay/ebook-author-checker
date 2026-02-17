@@ -137,7 +137,7 @@ export default async function ResultsPage({
                   <tr key={book.asin} className="border-b border-zinc-100 dark:border-zinc-800">
                     <td className="px-4 py-3">
                       {book.thumbnail && (
-                        <Image src={book.thumbnail} alt={book.title} className="h-16 w-auto rounded" />
+                        <img src={book.thumbnail} alt={book.title} className="h-16 w-auto rounded" />
                       )}
                     </td>
                     <td className="px-4 py-3 text-zinc-900 dark:text-zinc-100">
