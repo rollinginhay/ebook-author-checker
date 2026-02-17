@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ebook Author Checker",
+  title: "Sloppa Detector",
   description: "Look up an Amazon author's published books",
 };
 

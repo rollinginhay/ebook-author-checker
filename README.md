@@ -6,7 +6,7 @@ Enter an Amazon author page URL and get a summary of their publishing activity â
 
 ## Live Demo
 
-https://ebook-author-checker.vercel.app/
+https://sloppa-detector.vercel.app/
 
 ## Tech Stack
 
