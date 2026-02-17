@@ -1,6 +1,5 @@
 // lib/extractAuthorAsin.ts
 
-import {getJson} from "serpapi";
 import {AppError} from "@/lib/errors";
 
 /**
