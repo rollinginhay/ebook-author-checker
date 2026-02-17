@@ -4,6 +4,10 @@ A simple website to summarize authors' ebook releases on Amazon, with the purpos
 
 Enter an Amazon author page URL and get a summary of their publishing activity — how long they've been active, release frequency, average rating — along with a full table of their books.
 
+## Live Demo
+
+https://ebook-author-checker.vercel.app/
+
 ## Tech Stack
 
 - [Next.js](https://nextjs.org/) 16 (App Router)
