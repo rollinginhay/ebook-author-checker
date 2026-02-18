@@ -1,6 +1,6 @@
 // lib/getBooksByAuthorId.ts
 import {getJson} from "serpapi";
-import {AmazonBook} from "@/types/types";
+import {AmazonBook, BookReview} from "@/types/types";
 import {parseAuthors} from "@/lib/utils";
 import {AppError} from "@/lib/errors";
 
@@ -14,6 +14,7 @@ export async function getBookDetails(asin: string): Promise<AmazonBook> {
     let data = await getJson({
         engine: "amazon_product",
         asin,
+        no_cache: true,
         api_key: process.env.SERPAPI_KEY!,
     });
 
@@ -34,6 +35,7 @@ export async function getBookDetails(asin: string): Promise<AmazonBook> {
                     data = await getJson({
                         engine: "amazon_product",
                         asin: kindleAsin,
+                        no_cache: true,
                         api_key: process.env.SERPAPI_KEY!,
                     });
                     // Update asin to the Kindle version
@@ -95,6 +97,35 @@ export async function getBookDetails(asin: string): Promise<AmazonBook> {
         throw new AppError("PRODUCT_NOT_FOUND", `No product results found for ASIN: ${asin}`);
     }
 
+    // Extract reviews from reviews_information.authors_reviews
+    const rawReviews: { rating: number; text: string }[] =
+        (data.reviews_information?.authors_reviews ?? []).map(
+            (r: { rating: number; text: string }) => ({rating: r.rating, text: r.text})
+        );
+
+    const lowReviews: BookReview[] = rawReviews.filter((r) => r.rating < 5);
+
+    const starCounts = data.reviews_information?.summary?.customer_reviews;
+    let avgReviewScore: number | null = null;
+
+    if (starCounts) {
+        const counts: [number, number][] = [
+            [5, parseFloat(starCounts["5 star"]) || 0],
+            [4, parseFloat(starCounts["4 star"]) || 0],
+            [3, parseFloat(starCounts["3 star"]) || 0],
+            [2, parseFloat(starCounts["2 star"]) || 0],
+            [1, parseFloat(starCounts["1 star"]) || 0],
+        ];
+        const total = counts.reduce((s, [, c]) => s + c, 0);
+        if (total > 0) {
+            const weighted = counts.reduce((s, [stars, c]) => s + stars * c, 0);
+            avgReviewScore = weighted / total;
+        }
+    } else if (rawReviews.length > 0) {
+        avgReviewScore = rawReviews.reduce((s, r) => s + r.rating, 0) / rawReviews.length;
+    }
+
+
     return {
         asin,
         title: productResults.title,
@@ -104,6 +135,8 @@ export async function getBookDetails(asin: string): Promise<AmazonBook> {
         thumbnail: productResults.thumbnail,
         link: productResults.link,
         published: releaseDate,
+        lowReviews,
+        avgReviewScore,
     };
 }
 

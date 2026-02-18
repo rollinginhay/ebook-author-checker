@@ -3,7 +3,6 @@ import {extractAuthorAsin} from "@/lib/utils";
 import {getBooksByAuthorId} from "@/lib/amazon";
 import {AmazonBook} from "@/types/types";
 import {AppError} from "@/lib/errors";
-import Image from "next/image";
 
 export default async function ResultsPage({
   searchParams,
@@ -117,6 +116,74 @@ export default async function ResultsPage({
           );
         })()}
 
+        {(() => {
+          const booksWithLowReviews = books
+            .filter((b) => b.lowReviews.length > 0)
+            .map((b) => {
+              const avgLow = b.lowReviews.reduce((s, r) => s + r.rating, 0) / b.lowReviews.length;
+              return { book: b, avgLow };
+            })
+            .sort((a, b) => a.avgLow - b.avgLow)
+            .slice(0, 3);
+
+          if (booksWithLowReviews.length === 0) return null;
+
+          return (
+            <div className="mb-8">
+              <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+                Most Critically Reviewed
+              </h2>
+              <div className="space-y-4">
+                {booksWithLowReviews.map(({ book, avgLow }) => (
+                  <div
+                    key={book.asin}
+                    className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+                  >
+                    <div className="flex gap-4">
+                      {book.thumbnail && (
+                        <img
+                          src={book.thumbnail}
+                          alt={book.title}
+                          className="h-20 w-auto flex-shrink-0 rounded"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <a
+                          href={book.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-zinc-900 hover:underline dark:text-zinc-50"
+                        >
+                          {book.title}
+                        </a>
+                        <div className="mt-1 flex gap-4 text-sm text-zinc-500 dark:text-zinc-400">
+                          <span>Overall rating: <strong className="text-zinc-700 dark:text-zinc-300">{book.rating ?? "—"}</strong></span>
+                          <span>Avg. review score: <strong className="text-zinc-700 dark:text-zinc-300">{book.avgReviewScore != null ? book.avgReviewScore.toFixed(2) : "—"}</strong></span>
+                          <span>Avg. low review: <strong className="text-red-600">{avgLow.toFixed(1)}</strong></span>
+                          <span>{book.lowReviews.length} critical review{book.lowReviews.length !== 1 ? "s" : ""}</span>
+                        </div>
+                        <div className="mt-3 space-y-2">
+                          {book.lowReviews.map((review, i) => (
+                            <div
+                              key={i}
+                              className="rounded border border-zinc-100 bg-zinc-50 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800"
+                            >
+                              <span className="mr-2 text-xs font-semibold text-red-500">
+                                {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)} {review.rating}/5
+                              </span>
+                              <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">{review.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {books.length === 0 ? (
           <p className="text-zinc-600 dark:text-zinc-400">No books found for this author.</p>
         ) : (
@@ -128,6 +195,7 @@ export default async function ResultsPage({
                   <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">Title</th>
                   <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">Authors</th>
                   <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">Rating</th>
+                  <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">Avg. review score</th>
                   <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">Reviews</th>
                   <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">Published</th>
                 </tr>
@@ -150,6 +218,9 @@ export default async function ResultsPage({
                     </td>
                     <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
                       {book.rating ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                      {book.avgReviewScore != null ? book.avgReviewScore.toFixed(1) : "—"}
                     </td>
                     <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
                       {book.reviews ?? "—"}
