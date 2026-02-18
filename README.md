@@ -1,12 +1,17 @@
 # Ebook Author Checker
 
-A simple website to summarize authors' ebook releases on Amazon, with the purpose of spotting AI slop.
+A simple website to summarize authors' ebook releases on Amazon, with the purpose of quickly spotting low effort, suspicious authors.
 
-Enter an Amazon author page URL and get a summary of their publishing activity — how long they've been active, release frequency, average rating — along with a full table of their books.
+Enter an Amazon author page URL and get a summary of their publishing activity — how long they've been active, release frequency, average rating, average review scores — along with a full table of their books, and a highlight on their worst received books.
+
+Note: Serpapi's reliablity issues and data structures prevent consistent results, but it's good enough.
 
 ## Live Demo
 
 https://sloppa-detector.vercel.app/
+
+Final version - this project is no longer updated. 
+
 
 ## Tech Stack
 
